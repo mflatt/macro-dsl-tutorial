@@ -1,0 +1,208 @@
+
+Show QL end product
+
+----------------------------------------
+
+Intro to Racket: [30 min]
+
+ #lang racket
+
+ numbers, strings, booleans
+
+ define
+
+ lambda
+
+ map, etc.
+
+ struct
+
+ [for, class, etc.]
+
+ ----------------------
+
+ modules, require, provide
+
+ ----------------------
+
+ quote
+
+ #', syntax-e, datum->syntax, identifier?
+
+ define-syntax
+
+ syntax-parse
+
+ syntax-rules (with literals), define-syntax-rule
+
+ let-syntax
+
+ ----------------------
+
+ macros that expand to definitions; `begin` splicing
+
+----------------------------------------
+
+Practice: [30 min]
+
+ Start with the run-time core for an object system.
+
+   In the "objects" directory,
+    "raw.rkt" implements classes and objects;
+    "point-raw.rkt" uses it for a point class.
+
+ 1. Implement `send` via `define-syntax-rule`.
+
+   The "point-send.rkt" use shows how `send` should
+   work. You implement "send.rkt" by importing "raw.rkt"
+   and re-exporting some parts, while also adding
+   `define-syntax-rule`
+
+ 2. Change `send` to statically check for an identifier
+
+    For example,
+       (send a-pt 10)
+
+    should produce a syntax error instead of a "no value for key"
+    run-time error.
+
+    Start by changing `define-syntax-rule` to use `define-syntax` plus
+    a function, plus `syntax-parse`. You'll need to import
+    `racket/base` and `syntax/parse` for compile-time use. The
+    `identifier?` and `raise-syntax-error` functions will be handy.
+
+ 3. Implement `with-method`.
+
+    The "point-with-method.rkt" use shows how `with-method` should
+    work. As a first cut, it's ok to make `with-method` work only when
+    exactly one argument is provided.
+
+    Hint: the `with-method` macro is easiest to implement using
+    `let-syntax` to locally bind a name as a macro.
+   
+ 4. [Challenge] Implement `class`.
+
+    The "point-class.rkt" use shows how `class` should work.
+
+    Hint: the `syntax-id-rules` form is like `syntax-rules`, but an
+    "identifier macro" created with `syntax-id-rules` is triggered
+    even when an identifier is used by itself (i.e., not after an open
+    parenthesis) or when it is used with `set!`. The `class` form
+    should bind field names as identifier macros, so uses or
+    assignemnts of fields can be transformed to use `get-field` and
+    `set-field!`.
+
+----------------------------------------
+
+QL, part 1: [1 hour]
+
+ In "ql", "house.ql" should our ultimate target, while "house.rkt"
+  shows a parenthesized form of the language that we'll build up to
+  first.
+
+ The "gui.rkt" and "ops.rkt" modules are effectively the runtime
+  system for QL. The "house-raw.rkt" module uses those directly to
+  produce the same result as "house.rkt". We'll write macros that
+  implement "house.rkt" as "house-raw.rkt".
+
+ 1. Implement `form` without guards or computed field values (which no
+    particular syntax checks, for now).
+
+    The "house-raw-1.rkt" module provides a small example of what this
+    version should express. The commented-out part should be at the
+    end of a new "form-1.rkt" module, which you implement by importing
+    "gui.rkt" and "op.rkt" and defining `form`.
+
+    Hint: Use a `form-clause` helper macro.
+
+ 2. Support an optional expression to compute a field's value.
+
+    The "house-raw-2.rkt" module provides a small example of what this
+    version should express.
+
+    Hint: Change your `form-clause` helper to `form-clause*` with no
+    optional parts, and define a new `form-clause` with multiple
+    patterns that use `form-clause*`.
+
+ 3. Add support for guarded clauses via `when`.
+
+    See "house-raw-3.rkt".
+
+    Hint: The `form-clause` macro could use itself, especially if a
+    guard expression is threaded through.
+
+    Are guard expressions duplicated by your macros?
+
+ 4. Split the language implementation from use.
+
+    Instead of a "form-4.rkt" that has both the macros and the use,
+    have "form-4.rkt" be just the macros, and define "house-4.rkt" by
+    importing from "form-4.rkt".
+
+ 5. [Together] Turn the `form` module into a language.
+
+    See "house-5.rkt".
+
+ 6. Syntactically check that form has an identifier, and check that
+    each clause has an identifier and a question string.
+
+    See "house-6.rkt".
+
+ 7. Constrain `when` use so that it is allowed only for guarding
+    clauses.
+
+    See "house-7.rkt".
+
+    Hint: export a `when*` as `when`, where `when*` always rasies
+    a syntax error
+
+----------------------------------------
+
+QL, part 2: [1 hour]
+
+ Overview of a type-checking idea
+
+ modules and phases
+
+ syntax-local-value
+
+ local-expand
+
+ 1. Insert type declaration & checking uses, given `typed`,
+    `has-type`, `check-type`, and `datum`.
+
+    See "house-t1.rkt". The "has-type.rkt" module implements the basic
+    type-checking idea.
+
+    For now, operators do not yet have types, so they can't be used.
+
+ 2. Add types for operators.
+
+    See "house-t2.rkt".
+
+    Hint: Define `-/typed`, `>/typed`, etc., as replacements for
+    `-/coerce`, etc.
+
+ --------------------
+
+ Non-S-expression languages and DrRacket
+
+ 3. Given a reader, implement "main.rkt", and link the "ql"
+    collection.
+
+    The "reader.rkt" module provides suitable `read` and `read-syntax`
+    functions.
+
+ 4. [Together] Given `color-lexer`, add it to "main.rkt".
+
+    The "color-lexer.rkt" module provides `color-lexer`.
+
+----------------------------------------
+
+Homework:
+
+ 1. Add an `if` form for use in guards or expressions to compute field
+    values.
+
+ 2. Add a `text` field type, where "gui.rkt" already provides
+    `text-widget`.
