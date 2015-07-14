@@ -1,6 +1,6 @@
 #lang racket/base
 (require (rename-in "with-method.rkt"
-                    [class runtime:class]))
+                    [class raw:class]))
 
 (provide class
          make-object
@@ -13,7 +13,7 @@
         this-id
         (define (method-name arg ...) body ...)
         ...)
-     (runtime:class
+     (raw:class
       (for/hash ([name '(method-name ...)]
                  [proc (list (lambda (this-id arg ...)
                                (define-field field-name this-id)

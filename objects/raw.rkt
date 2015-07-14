@@ -10,7 +10,7 @@
                field-positions)) ; (hashof symbol integer)
 
 (struct object (class   ; class
-                [fields #:mutable])) ; (listof any)
+                [fields #:mutable])) ; (vectorof any)
 
 (define (make-object c . args)
   (object c (list->vector args)))

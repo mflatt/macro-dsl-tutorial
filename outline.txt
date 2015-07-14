@@ -71,6 +71,10 @@ Practice: [30 min]
     `racket/base` and `syntax/parse` for compile-time use. The
     `identifier?` and `raise-syntax-error` functions will be handy.
 
+     Hint:
+       (unless (identifier? ....)
+         (raise-syntax-error #f "not an identifier" ....))
+
  3. Implement `with-method`.
 
     The "point-with-method.rkt" use shows how `with-method` should
