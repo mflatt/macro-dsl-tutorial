@@ -210,3 +210,7 @@ Homework:
 
  2. Add a `text` field type, where "gui.rkt" already provides
     `text-widget`.
+
+You can pick any of the QL solutions as a starting point, but one with
+at least type checking will be the most interesting, and the one with
+non-S-expression syntax should be within reach.
